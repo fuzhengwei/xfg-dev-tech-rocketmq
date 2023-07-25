@@ -1,0 +1,17 @@
+version: '3'
+services:
+  # https://hub.docker.com/r/xuchengen/rocketmq
+  rocketmq:
+    image: livinphp/rocketmq:5.1.0
+    container_name: rocketmq
+    ports:
+      - 7397:7397
+      - 9876:9876
+      - 10909:10909
+      - 10911:10911
+      - 10912:10912
+    volumes:
+      - ./data:/home/app/data
+    environment:
+      TZ: "Asia/Shanghai"
+      NAMESRV_ADDR: "rocketmq:9876"
