@@ -1,0 +1,1 @@
+docker exec -it rocketmq-broker sh mqadmin updateSubGroup -n rocketmq-namesrv:9876 -g test-group -t xfg-dev-tech-rocketmq

@@ -1,0 +1,28 @@
+# /usr/local/bin/docker-compose -f /docs/dev-ops/environment/environment-docker-compose.yml up -d
+# 启动服务 docker-compose up -d
+# 关闭服务 docker-compose down
+version: '3'
+services:
+  # RocketMQ https://hub.docker.com/r/apache/rocketmq/tags
+  rocketmq-namesrv:
+    image: apache/rocketmq:4.9.7
+    container_name: rocketmq-namesrv
+    command: sh mqnamesrv
+    ports:
+      - "9876:9876"
+  rocketmq-broker:
+    image: apache/rocketmq:4.9.7
+    container_name: rocketmq-broker
+    command: sh mqbroker -n rocketmq-namesrv:9876
+    ports:
+      - "10911:10911"
+      - "10909:10909"
+    depends_on:
+      - rocketmq-namesrv
+  rocketmq-dashboard:
+    image: apacherocketmq/rocketmq-dashboard
+    container_name: rocketmq-dashboard
+    ports:
+      - "8080:8080"
+    environment:
+      - "JAVA_OPTS=-Drocketmq.config.namesrvAddr=rocketmq-namesrv:9876"
