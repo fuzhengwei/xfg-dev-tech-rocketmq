@@ -8,7 +8,7 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/road-map?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
     driver-class-name: com.mysql.jdbc.Driver
 
-
+# RocketMQ 配置
 rocketmq:
   name-server: 127.0.0.1:9876
   consumer:
