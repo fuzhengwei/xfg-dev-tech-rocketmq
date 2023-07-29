@@ -38,3 +38,4 @@ build/
 .DS_Store
 /xfg-dev-tech-app/data/
 /.idea/
+/docs/.$rocketmq.drawio.bkp
