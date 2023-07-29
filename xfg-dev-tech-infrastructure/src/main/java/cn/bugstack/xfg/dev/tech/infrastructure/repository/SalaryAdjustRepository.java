@@ -1,5 +1,6 @@
 package cn.bugstack.xfg.dev.tech.infrastructure.repository;
 
+import cn.bugstack.xfg.dev.tech.domain.salary.event.SalaryAdjustEvent;
 import cn.bugstack.xfg.dev.tech.domain.salary.model.aggreate.AdjustSalaryApplyOrderAggregate;
 import cn.bugstack.xfg.dev.tech.domain.salary.model.entity.EmployeeEntity;
 import cn.bugstack.xfg.dev.tech.domain.salary.model.entity.EmployeeSalaryAdjustEntity;
@@ -7,6 +8,7 @@ import cn.bugstack.xfg.dev.tech.domain.salary.repository.ISalaryAdjustRepository
 import cn.bugstack.xfg.dev.tech.infrastructure.dao.IEmployeeDAO;
 import cn.bugstack.xfg.dev.tech.infrastructure.dao.IEmployeeSalaryAdjustDAO;
 import cn.bugstack.xfg.dev.tech.infrastructure.dao.IEmployeeSalaryDAO;
+import cn.bugstack.xfg.dev.tech.infrastructure.event.EventPublisher;
 import cn.bugstack.xfg.dev.tech.infrastructure.po.EmployeePO;
 import cn.bugstack.xfg.dev.tech.infrastructure.po.EmployeeSalaryAdjustPO;
 import cn.bugstack.xfg.dev.tech.infrastructure.po.EmployeeSalaryPO;
@@ -26,6 +28,8 @@ public class SalaryAdjustRepository implements ISalaryAdjustRepository {
     private IEmployeeSalaryDAO employeeSalaryDAO;
     @Resource
     private IEmployeeSalaryAdjustDAO employeeSalaryAdjustDAO;
+    @Resource
+    private EventPublisher eventPublisher;
 
     /**
      * Spring Boot 事务管理的级别可以通过 `@Transactional` 注解的 `isolation` 属性进行配置。常见的事务隔离级别有以下几种：
@@ -84,6 +88,13 @@ public class SalaryAdjustRepository implements ISalaryAdjustRepository {
 
         // 写入流水
         employeeSalaryAdjustDAO.insert(employeeSalaryAdjustPO);
+
+        /*
+         * 发送消息，实际应用常见建议
+         * 1. 消息发送，不要写在数据库事务中。因为事务一直占用数据库连接，需要快速释放。
+         * 2. 对于一些强MQ要求的场景，需要在发送MQ前，写入一条数据库 Task 记录，发送消息后更新 Task 状态为成功。如果长时间未更新数据库状态或者为失败的，则需要由任务补偿进行处理。
+         */
+        eventPublisher.publish(SalaryAdjustEvent.TOPIC, SalaryAdjustEvent.create(adjustSalaryApplyOrderAggregate));
 
         return orderId;
     }

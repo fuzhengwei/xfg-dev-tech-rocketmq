@@ -24,10 +24,10 @@ public class ISalaryAdjustApplyServiceTest {
     private ISalaryAdjustApplyService salaryAdjustApplyService;
 
     @Test
-    public void test_execSalaryAdjust() {
+    public void test_execSalaryAdjust() throws InterruptedException {
         AdjustSalaryApplyOrderAggregate adjustSalaryApplyOrderAggregate = AdjustSalaryApplyOrderAggregate.builder()
                 .employeeNumber("10000001")
-                .orderId("100908977676002")
+                .orderId("100908977676003")
                 .employeeEntity(EmployeeEntity.builder().employeeLevel(EmployeePostVO.T3).employeeTitle(EmployeePostVO.T3).build())
                 .employeeSalaryAdjustEntity(EmployeeSalaryAdjustEntity.builder()
                         .adjustTotalAmount(new BigDecimal(100))
@@ -38,6 +38,8 @@ public class ISalaryAdjustApplyServiceTest {
         String orderId = salaryAdjustApplyService.execSalaryAdjust(adjustSalaryApplyOrderAggregate);
 
         log.info("调薪测试 req: {} res: {}", JSON.toJSONString(adjustSalaryApplyOrderAggregate), orderId);
+
+        Thread.sleep(Integer.MAX_VALUE);
     }
 
 }

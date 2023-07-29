@@ -14,26 +14,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 @RestController
 public class Controller {
 
-    @Resource
-    private ThreadPoolExecutor threadPoolExecutor;
-
     /**
      * http://localhost:8090/success
      */
     @RequestMapping("/success")
     public Response<String> success() {
-        log.info("测试调用");
-        try {
-            // 随机休眠
-            Thread.sleep(new Random().nextInt(1000));
-            // 开启线程
-            threadPoolExecutor.execute(() -> {
-                log.info("开启线程");
-            });
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        if (new Random().nextInt(100) == 1) throw new RuntimeException("异常");
         return Response.<String>builder()
                 .code(Constants.ResponseCode.SUCCESS.getCode())
                 .info(Constants.ResponseCode.SUCCESS.getInfo())
